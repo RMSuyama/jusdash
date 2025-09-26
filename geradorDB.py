@@ -559,12 +559,76 @@ def inject_errors(record_dict, taxa_erro):
     erro_tipo = []
     erro_flag = False
 
-    # Para cada campo, com certa probabilidade, introduz um erro específico
-    # Ex.: deixar tribunal vazio
+
+    # Lista de tribunais
+    tribunais = [
+        # TJs
+        "TJAC","TJAL","TJAP","TJAM","TJBA","TJCE","TJDFT","TJES","TJGO","TJMA","TJMT","TJMS",
+        "TJPB","TJPE","TJPI","TJPR","TJRJ","TJRN","TJRS","TJRO","TJRR","TJSC","TJSP","TJSE","TJTO",
+        # TRFs
+        "TRF1","TRF2","TRF3","TRF4","TRF5",
+        # Superiores
+        "STF","STJ","STM",
+        # TREs
+        "TRE-AC","TRE-AL","TRE-AP","TRE-AM","TRE-BA","TRE-CE","TRE-DF","TRE-ES","TRE-GO","TRE-MA","TRE-MT","TRE-MS",
+        "TRE-MG","TRE-PA","TRE-PB","TRE-PR","TRE-PE","TRE-PI","TRE-RJ","TRE-RN","TRE-RS","TRE-RO","TRE-RR","TRE-SC","TRE-SP","TRE-SE","TRE-TO",
+        # TRTs
+        "TRT1","TRT2","TRT3","TRT4","TRT5","TRT6","TRT7","TRT8","TRT9","TRT10","TRT11","TRT12","TRT13","TRT14","TRT15","TRT16",
+        "TRT17","TRT18","TRT19","TRT20","TRT21","TRT22","TRT23","TRT24","TRT25"
+    ]
+
+    # Pesos base por região
+    pesos_tribunais = {t: 1 for t in tribunais}  # Norte, Centro-Oeste, Nordeste, Sul base = 1
+
+    # Sudeste (mais processos)
+    sudeste = ["TJSP","TJRJ","TJMG","TJES","TRF2","TRF3","TRE-SP","TRE-RJ","TRT2","TRT3","TRT15"]
+    for t in sudeste:
+        if t in pesos_tribunais:
+            pesos_tribunais[t] = 4  # Sudeste = 4x mais chance
+
+    # Sul (moderado)
+    sul = ["TJRS","TJSC","TJPR","TRF4","TRE-RS","TRE-SC","TRE-PR","TRT4","TRT12","TRT24"]
+    for t in sul:
+        if t in pesos_tribunais:
+            pesos_tribunais[t] =  4 # Sul = 4x mais chance
+
+    # Nordeste (menor que Sudeste e Sul)
+    nordeste = ["TJBA","TJC","TJCE","TJPB","TJPE","TJPI","TJMA","TRF5","TRE-BA","TRE-CE","TRE-PB","TRE-PE","TRE-PI","TRE-MA","TRT5","TRT16","TRT21"]
+    for t in nordeste:
+        if t in pesos_tribunais:
+            pesos_tribunais[t] = 3  # Nordeste = 3x mais chance
+
+    # Norte (menos frequente)
+    norte = ["TJAC","TJAL","TJAP","TJAM","TJRRO","TJRO","TJRR","TJTO","TRF1","TRE-AC","TRE-AP","TRE-AM","TRE-RO","TRE-RR","TRE-TO","TRT1","TRT14","TRT17"]
+    for t in norte:
+        if t in pesos_tribunais:
+            pesos_tribunais[t] = 2  # Norte = 2x mais chance
+
+    # Centro-Oeste (intermediário)
+    centro_oeste = ["TJGO","TJMT","TJMS","TRF1","TRE-GO","TRE-MT","TRE-MS","TRT18","TRT23"]
+    for t in centro_oeste:
+        if t in pesos_tribunais:
+            pesos_tribunais[t] = 4  # Centro-Oeste = 4x mais chance
+
+    # Escolha ponderada
+    tribunais_lista = list(pesos_tribunais.keys())
+    tribunais_pesos = list(pesos_tribunais.values())
+
+    tribunal_escolhido = random.choices(tribunais)
+
+
+
+
+
+    # Probabilidade de erro
     if random.random() < taxa_erro * 0.25:
-        record_dict["tribunal"] = ""  # campo vazio
+        # Campo vazio
+        record_dict["tribunal"] = ""
         erro_flag = True
         erro_tipo.append("tribunal_vazio")
+    else:
+        # Campo preenchido normalmente, com Sudeste mais frequente
+        record_dict["tribunal"] = random.choices(tribunais_lista, weights=tribunais_pesos, k=1)[0]
 
     # relator vira None
     if random.random() < taxa_erro * 0.12:
