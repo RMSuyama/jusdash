@@ -15,7 +15,7 @@ df = pd.read_csv("julgados_1.csv", sep=",", decimal=",")
 
 st.set_page_config(page_title="Dashboard de Julgados", layout="wide")
 
-st.title("📊 Dashboard de Julgados Fictícios")
+st.title("Dashboard de Julgados")
 st.markdown("Explore os julgados e identifique possíveis erros de coleta e inconsistências.")
 
 # === Mapa completo de tribunais ===
@@ -101,7 +101,7 @@ col3.metric("Relatores", df_filtrado["relator"].nunique())
 col4.metric("Total de Valores (com erro)", (df_filtrado["status_erro"] == "Com erro").sum())
 
 # === Gráficos ===
-st.subheader("📈 Distribuição dos Julgados")
+st.subheader("Distribuição dos Julgados")
 
 # 🔹 Gráfico 1 - Barras horizontais por tribunal
 erros_por_tribunal = df_filtrado.groupby(["tribunal", "status_erro"]).size().reset_index(name="total")
@@ -122,7 +122,7 @@ fig2 = px.histogram(
 st.plotly_chart(fig2, use_container_width=True)
 
 # === Tabela com destaque para erros ===
-st.subheader("📑 Tabela de Julgados")
+st.subheader("Tabela de Julgados")
 st.dataframe(df_filtrado)
 
 # === Download ===
