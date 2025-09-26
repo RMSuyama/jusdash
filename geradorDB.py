@@ -10,7 +10,7 @@ from faker import Faker
 from datetime import datetime, timedelta
 
 # ----------------- CONFIGURAÇÃO -----------------
-NUM_REGISTROS = 54458
+NUM_REGISTROS = 35443
 SAIDA_DIR = "julgados_csv"
 NOME_ARQUIVO = os.path.join(SAIDA_DIR, "julgados_1.csv")
 
